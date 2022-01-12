@@ -6,7 +6,6 @@
       width="290px"
       class="mx-2"
       contain
-      alt="Sorry :("
     ></v-img>
 
     <v-card-title>
@@ -48,7 +47,7 @@
       </v-btn>
     </v-card-actions>
 
-    <v-expand-transition >
+    <v-expand-transition>
       <div v-show="show" class="popupText">
         <v-divider></v-divider>
         <v-card-title>Airline name - {{ airlineName }}</v-card-title>
@@ -68,8 +67,8 @@
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 
-import ConfirmDelete from "@/components/ConfirmDelete";
-import SuccessfullyDeletedCard from "@/components/SuccessfullyDeletedCard";
+import ConfirmDelete from "@/components/Modal/ConfirmDelete";
+import SuccessfullyDeletedCard from "@/components/Modal/SuccessfullyDeletedCard";
 
 export default {
   name: "Card",

@@ -1,5 +1,5 @@
 <template>
-  <div class="cards-list">
+  <div class="cards-list" >
     <main class="d-flex flex-column" width="400">
       <Card
         v-for="card in ALL_CARDS"
@@ -12,6 +12,7 @@
         <SuccessfullyDeletedCard @closeCuccessDelete="closeCuccessDelete" />
       </v-dialog>
     </main>
+
     <footer>
       <div ref="infinitescrolltrigger" id="scoll-trigger"></div>
     </footer>
@@ -20,7 +21,7 @@
 
 <script>
 import Card from "@/components/Card.vue";
-import SuccessfullyDeletedCard from "@/components/SuccessfullyDeletedCard";
+import SuccessfullyDeletedCard from "@/components/Modal/SuccessfullyDeletedCard";
 
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 export default {
