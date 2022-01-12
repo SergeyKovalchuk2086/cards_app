@@ -1,58 +1,73 @@
 <template>
   <div class="cards-list">
-    <Card
-      v-for="card in ALL_CARDS"
-      :key="card._id"
-      :card_data="card"
-      @succDelete="succDelete"
-    />
-    <v-dialog v-model="successDelete" max-width="350px" :close-delay="3000">
-      <SuccessfullyDeletedCard
+    <main class="d-flex flex-column" width="400">
+      <Card
+        v-for="card in ALL_CARDS"
+        :key="card._id"
+        :card_data="card"
         @succDelete="succDelete"
-        @closeCuccessDelete="closeCuccessDelete"
       />
-    </v-dialog>
+      <!-- окно успешного удаления -->
+      <v-dialog v-model="successDelete" max-width="350px">
+        <SuccessfullyDeletedCard @closeCuccessDelete="closeCuccessDelete" />
+      </v-dialog>
+    </main>
+    <footer>
+      <div ref="infinitescrolltrigger" id="scoll-trigger"></div>
+    </footer>
   </div>
 </template>
 
 <script>
-import Card from '@/components/Card.vue';
-import SuccessfullyDeletedCard from '@/components/SuccessfullyDeletedCard';
+import Card from "@/components/Card.vue";
+import SuccessfullyDeletedCard from "@/components/SuccessfullyDeletedCard";
 
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 export default {
   components: {
     Card,
     SuccessfullyDeletedCard,
   },
-  name: 'CardsList',
+  name: "CardsList",
   data() {
     return {
       successDelete: false,
+      page: 0,
     };
   },
   methods: {
-    ...mapActions(['GET_CARDS', 'DELETE_CARD']),
+    ...mapActions(["GET_CARDS", "DELETE_CARD"]),
 
     succDelete() {
       this.successDelete = !this.successDelete;
     },
 
+    //закрыть окно подтверждения при удалении
     closeCuccessDelete() {
       this.successDelete = !this.successDelete;
     },
-    // deleteCard(id) {
-    //   this.DELETE_CARD(id);
-    // },
-    //  @deleteCard="deleteCard(card._id)"
+
+    //загрузка данных с rest api при скролле страницы
+    setLoadingObserver() {
+      const loadingObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            this.page++;
+            this.GET_CARDS(this.page);
+          }
+        });
+      });
+      loadingObserver.observe(this.$refs.infinitescrolltrigger);
+    },
   },
   computed: {
-    ...mapGetters(['ALL_CARDS']),
+    ...mapGetters(["ALL_CARDS"]),
   },
   mounted() {
-    this.GET_CARDS();
+    this.setLoadingObserver();
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+</style>

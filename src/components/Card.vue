@@ -4,8 +4,9 @@
       :src="imageUrl"
       height="200px"
       width="290px"
-      class="mx-auto"
+      class="mx-2"
       contain
+      alt="Sorry :("
     ></v-img>
 
     <v-card-title>
@@ -13,23 +14,33 @@
     >
 
     <v-card-subtitle>
-      {{ card_data.trips ? card_data.trips : "0" }} miles of wonder
+      Trips - {{ card_data.trips ? card_data.trips : "0" }}
     </v-card-subtitle>
 
     <v-card-actions>
-      <v-dialog v-model="confirmDelete" max-width="450px">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn color="orange lighten-2" text v-bind="attrs" v-on="on">
-            Delete
-          </v-btn>
-        </template>
-        <ConfirmDelete
-          :name="card_data.name"
-          @closeConfirmDelete="closeConfirmRemove()"
-          @deleteCard="deleteCard()"
-        />
-      </v-dialog>
-
+      <transition
+        appear
+        name="slide-y-transition"
+        :duration="{ enter: 5000, leave: 8000 }"
+      >
+        <v-dialog
+          v-model="confirmDelete"
+          max-width="450px"
+          transition="scale-transition"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn color="orange lighten-2" text v-bind="attrs" v-on="on">
+              Delete
+            </v-btn>
+          </template>
+          <!-- окно подтверждения удаления -->
+          <ConfirmDelete
+            :name="card_data.name"
+            @closeConfirmDelete="closeConfirmRemove()"
+            @deleteCard="deleteCard()"
+          />
+        </v-dialog>
+      </transition>
       <v-spacer></v-spacer>
 
       <v-btn icon @click="show = !show">
@@ -37,12 +48,18 @@
       </v-btn>
     </v-card-actions>
 
-    <v-expand-transition>
-      <div v-show="show">
+    <v-expand-transition >
+      <div v-show="show" class="popupText">
         <v-divider></v-divider>
-        <v-card-title>{{ title }}</v-card-title>
-        <v-card-subtitle>Established in {{ established }}</v-card-subtitle>
-        <v-card-text> Headquaters : {{ head_quaters }} </v-card-text>
+        <v-card-title>Airline name - {{ airlineName }}</v-card-title>
+        <v-card-subtitle>Country - {{ airlineCountry }}</v-card-subtitle>
+        <v-card-text class="pb-0"
+          >Established in {{ established }}.</v-card-text
+        >
+        <v-card-text class="cardText">
+          Headquaters : {{ head_quaters }}.
+        </v-card-text>
+        <v-card-text>"{{ slogan }}" </v-card-text>
       </div>
     </v-expand-transition>
   </v-card>
@@ -72,9 +89,11 @@ export default {
     return {
       show: false,
       imageUrl: "",
-      title: "",
+      airlineName: "",
+      airlineCountry: "",
       established: "",
       head_quaters: "",
+      slogan: "",
       confirmDelete: false,
       successDelete: false,
     };
@@ -83,13 +102,15 @@ export default {
     ...mapActions(["DELETE_CARD"]),
     ...mapMutations(["REMOVE_IN_STATE"]),
 
-    //достаём данные
+    //достаём данные и заполняем карточку
     setInfoCard() {
       this.card_data.airline.forEach((item) => {
         this.imageUrl = item.logo;
-        this.title = item.country;
+        this.airlineName = item.name;
+        this.airlineCountry = item.country;
         this.established = item.established;
         this.head_quaters = item.head_quaters;
+        this.slogan = item.slogan;
       });
     },
 
@@ -101,7 +122,6 @@ export default {
           this.$emit("succDelete");
         }
       });
-
       this.successDelete = !this.successDelete;
     },
 
@@ -116,4 +136,16 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.popupText {
+  max-width: 306px;
+}
+
+::v-deep .v-card__text {
+  padding-top: 0;
+}
+
+::v-deep .v-card__title {
+  word-break: normal;
+}
+</style>
